@@ -33,6 +33,7 @@ e10 => expires at 10 seconds since epoch
 #include <set>
 #include <unordered_map>
 #include <vector>
+#include <chrono>
 
 int g_Time = 0;
 typedef int CacheData;
@@ -179,7 +180,7 @@ class PriorityExpiryCache
     }
 
     // Evict items if the cache size exceeds maxItems
-    while (cache.size() > maxItems)
+    while (cache.size() > static_cast<size_t>(maxItems))
     {
       // Find the lowest priority from the priorityQueue
       int lowestPriority = *priorityQueue.begin();
@@ -187,7 +188,7 @@ class PriorityExpiryCache
       // Evict least used items of the lowest priority using LRU
       auto &lruList = priorityLRU[lowestPriority];
 
-      while (!lruList.empty() && cache.size() > maxItems)
+      while (!lruList.empty() && cache.size() > static_cast<size_t>(maxItems))
       {
         std::string key = lruList.back(); // Least recently used item
         CacheItem &item = cache[key];
